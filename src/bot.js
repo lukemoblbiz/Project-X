@@ -1,4 +1,5 @@
-const { Client, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Events, GatewayIntentBits, MessageEmbed } = require('discord.js');
+const newCollection = require('./newCollection.js');
 require("dotenv").config();
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 
@@ -11,8 +12,6 @@ client.on("ready", () => {
     console.log(`Logged is as ${client.user.tag}!`);
 });
 
-client.on('messageCreate', (message) => {
-    console.log(message.content);
-})
+newCollection.init(client);
 
 client.login(mySecret);
