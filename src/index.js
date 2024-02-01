@@ -5,6 +5,7 @@ const newCollection = require('./newCollection.js');
 const statsCollectionModule = require('./statsCollection.js');
 const axios = require('axios');
 const eventHandler = require('./handlers/eventHandler.js');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -20,8 +21,19 @@ if (!token || typeof token !== 'string') {
     throw new Error('Invalid token configuration.');
 }
 
-eventHandler(client);
-newCollection.init(client);
+(async () => {
+    try {
+      mongoose.set('strictQuery', false);
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log('Connected to DB.');
+
+      eventHandler(client);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
+  })();
+
+  newCollection.init(client);
 
 client.login(token)
   .catch(error => {
