@@ -1,6 +1,6 @@
 module.exports = {
     name: 'ping',
-    description: 'pong',
+    description: 'pong back',
     devOnly: true,
     testOnly: true,
 
