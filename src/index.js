@@ -1,8 +1,8 @@
 const { Client, GatewayIntentBits, ApplicationCommandOptionType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const newCollection = require('./newCollection.js');
-const statsCollectionModule = require('./statsCollection.js');
+const newCollection = require('./utils/newCollection.js');
+const statsCollectionModule = require('./utils/statsCollection.js');
 const axios = require('axios');
 const eventHandler = require('./handlers/eventHandler.js');
 const mongoose = require('mongoose');
@@ -28,14 +28,14 @@ if (!token || typeof token !== 'string') {
       console.log('Connected to DB.');
 
       eventHandler(client);
+
+      newCollection.init(client);
+
+      client.login(token)
+        .catch(error => {
+          console.error(`Error during login: ${error.message}`);
+        });
     } catch (error) {
       console.log(`Error: ${error}`);
     }
   })();
-
-  newCollection.init(client);
-
-client.login(token)
-  .catch(error => {
-    console.error(`Error during login: ${error.message}`);
-  });
