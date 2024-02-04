@@ -28,9 +28,7 @@ if (!token || typeof token !== 'string') {
       console.log('Connected to DB.');
 
       eventHandler(client);
-
-      newCollection.init(client);
-
+      
       client.login(token)
         .catch(error => {
           console.error(`Error during login: ${error.message}`);
