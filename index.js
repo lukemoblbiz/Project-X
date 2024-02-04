@@ -1,8 +1,6 @@
 const { Client, GatewayIntentBits, ApplicationCommandOptionType } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const newCollection = require('./utils/newCollection.js');
-const statsCollectionModule = require('./utils/statsCollection.js');
 const axios = require('axios');
 const eventHandler = require('./handlers/eventHandler.js');
 const mongoose = require('mongoose');
