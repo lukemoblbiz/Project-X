@@ -11,7 +11,7 @@ const portfolioInfo = new Schema({
     },
     walletAddresses: {
         type: Array,
-        default: 0,
+        default: [],
     }
 })
 
