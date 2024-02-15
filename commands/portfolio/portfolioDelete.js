@@ -14,8 +14,17 @@ module.exports = {
      */
     callback: async (client, interaction) => {
 
-        await interaction.deferReply();
-        await Portfolio.deleteMany({userId: interaction.user.id, guildId: interaction.guildID});
-        interaction.editReply(`Portfolio deleted`);
+        await interaction.deferReply({ ephemeral: true });
+
+        const query = new Portfolio({
+            userId: interaction.user.id,
+            guildId: interaction.guildId
+        });
+        const num = await Portfolio.deleteMany({
+            userId: query.userId,
+            guildId: query.guildId
+        });
+
+        interaction.editReply(`${num.deletedCount} portfolio(s) deleted`);
     }
 }

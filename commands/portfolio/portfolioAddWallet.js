@@ -18,15 +18,15 @@ module.exports = {
  * @param {Interaction} interaction 
  */
     callback: async (client, interaction) => {
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
 
         try {
-            const portfolio = Portfolio.find({
+            const portfolio = Portfolio.findOne({
                 userId: interaction.user.id,
                 guildId: interaction.guildId
             });
             console.log(portfolio);
-            interaction.editReply(`hello`);
+            interaction.editReply(`recieved`);
 
            /* if(portfolio) {
                 if(portfolio.walletAddresses.length < 5) {
