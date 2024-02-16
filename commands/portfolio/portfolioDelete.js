@@ -16,14 +16,11 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: true });
 
-        const query = new Portfolio({
+        const query = {
             userId: interaction.user.id,
             guildId: interaction.guildId
-        });
-        const num = await Portfolio.deleteMany({
-            userId: query.userId,
-            guildId: query.guildId
-        });
+        };
+        const num = await Portfolio.deleteMany(query);
 
         interaction.editReply(`${num.deletedCount} portfolio(s) deleted`);
     }

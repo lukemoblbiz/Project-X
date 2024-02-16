@@ -14,7 +14,8 @@
     "discord.js": "^14.14.1",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
-    "mongose": "^0.0.2-security"
+    "mongose": "^0.0.2-security",
+    "moralis": "^2.24.2"
   },
   "devDependencies": {
     "dotenv": "^16.4.1"

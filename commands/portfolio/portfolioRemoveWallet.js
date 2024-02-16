@@ -1,8 +1,6 @@
 const { Client, Interaction } = require('discord.js');
 const Portfolio = require('../../models/Portfolio');
 
-const walletChoices =
-
 module.exports = {
     name: 'removewallet',
     description: 'Remove a wallet to be tracked under your portfolio.',
@@ -32,14 +30,15 @@ module.exports = {
                 interaction.options.getString('address')
             );
             if(index != -1) {
-                portfolio.walletAddresses.splice(index, index);
+                const test = portfolio.walletAddresses.splice(index, 1);
+
                 await portfolio.save();
                 interaction.editReply("Wallet successfully deleted.");
             } else {
                 interaction.editReply("This wallet does not exist.");
             }
         } catch (error)  {
-            console.log(`Error creating profile: ${error}`);
+            console.log(`Error deleting wallet: ${error}`);
         }
     }
 }
