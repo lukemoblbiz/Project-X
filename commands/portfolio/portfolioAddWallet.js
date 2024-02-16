@@ -1,6 +1,8 @@
 const { Client, Interaction } = require('discord.js');
 const Portfolio = require('../../models/Portfolio');
 
+//interaction.options.getString('address'));
+
 module.exports = {
     name: 'addwallet',
     description: 'Add a wallet to track under your portfolio.',
@@ -20,26 +22,23 @@ module.exports = {
     callback: async (client, interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
+        const query = {
+            userId: interaction.user.id,
+            guildId: interaction.guildId
+        };
+        const portfolio = await Portfolio.findOne(query);
         try {
-            const portfolio = Portfolio.findOne({
-                userId: interaction.user.id,
-                guildId: interaction.guildId
-            });
-            console.log(portfolio);
-            interaction.editReply(`recieved`);
+            if(portfolio.walletAddresses.length < 5) {
 
-           /* if(portfolio) {
-                if(portfolio.walletAddresses.length < 5) {
-                    portfolio.walletAddresses.push(interaction.options.getString('address'));
-                    console.log(portfolio.walletAdresses);
-                } else {
-                    //wallets > 5
-                    interaction.editReply('You already have 5 wallets. Use "/removewallet" to clear space.');
-                }
+                portfolio.walletAddresses.push(
+                    interaction.options.getString('address')
+                );
+                await portfolio.save();
+
+                interaction.editReply("Wallet successfully added.");
             } else {
-                //!portfolio
-                interaction.editReply(`You do not have an active portfolio. Use "/createportfolio" to make one`);
-            } */
+                interaction.editReply('You already have 5 wallets.');
+            }
         } catch (error) {
             console.log(`Error creating profile: ${error}`);
         } 

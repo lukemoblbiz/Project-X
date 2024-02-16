@@ -21,18 +21,16 @@ module.exports = {
         });
         try {
             if(!portfolio) {
-                console.log(`NO PORFOLIO ${portfolio}`);
                 const newPortfolio = new Portfolio({
                     userId: interaction.user.id,
                     guildId: interaction.guildId
                 });
 
                 await newPortfolio.save();
-                interaction.editReply(`Portfolio successfully created. Use "/addwallet[walletAddress] to link a wallet to your portfolio.`);
+                interaction.editReply(`Portfolio successfully created.`);
             } else {
-                console.log(`EXISTING PORTFOLIO ${portfolio}`);
                 //portfolio exists
-                interaction.editReply(`You already have an active portfolio. Use "/addwallet[walletAddress] to link a wallet to your portfolio.`);
+                interaction.editReply(`You already have an active portfolio.`);
             }
         } catch(error) {
             console.log(`Error creating profile: ${error}`);
