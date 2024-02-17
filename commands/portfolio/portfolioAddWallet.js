@@ -1,5 +1,6 @@
 const { Client, Interaction } = require('discord.js');
 const Portfolio = require('../../models/Portfolio');
+const Moralis = require("moralis").default;
 
 //interaction.options.getString('address'));
 
@@ -22,13 +23,26 @@ module.exports = {
     callback: async (client, interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
+        //checks validity
+        let isValidWallet = true;
+        try {
+            await Moralis.SolApi.account.getPortfolio({
+                "network": "mainnet",
+                "address": interaction.options.getString('address')
+            });
+        } catch (e) {
+            isValidWallet = false;
+        }
+
+        //finds portfolio
         const query = {
             userId: interaction.user.id,
             guildId: interaction.guildId
         };
-        const portfolio = await Portfolio.findOne(query);
+
         try {
-            if(portfolio.walletAddresses.length < 5) {
+            const portfolio = await Portfolio.findOne(query);
+            if(portfolio.walletAddresses.length < 5 && isValidWallet) {
 
                 portfolio.walletAddresses.push(
                     interaction.options.getString('address')
@@ -37,10 +51,12 @@ module.exports = {
 
                 interaction.editReply("Wallet successfully added.");
             } else {
-                interaction.editReply('You already have 5 wallets.');
+                interaction.editReply('You already have 5 wallets or this is an invalid wallet.');
             }
+
+        //!portfolio
         } catch (error) {
-            console.log(`Error creating profile: ${error}`);
+            interaction.editReply('You must create a portfolio.');
         } 
     }
 }

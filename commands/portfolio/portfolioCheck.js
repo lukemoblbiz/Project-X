@@ -23,10 +23,6 @@ module.exports = {
 
         try {
             const portfolio = await Portfolio.findOne(query);
-
-            await Moralis.start({
-            apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjFlYmRiNTg3LTQ2ZjMtNGVjMy1iMzVjLTBmZTk3MzMyYmM0YyIsIm9yZ0lkIjoiMzc3NDIxIiwidXNlcklkIjoiMzg3ODUyIiwidHlwZUlkIjoiZjBkMzMxMDEtNGY3MS00NGMwLTkwNTYtYzM1MzIzNzZmZDJhIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDgwMjI0MDAsImV4cCI6NDg2Mzc4MjQwMH0.58ucItw_dPvfXiRd-P-8f_sSwXBRH9GSfBIlmjsSA7s"
-            });
         
             //full response
             let responseArr = [];
@@ -75,10 +71,13 @@ module.exports = {
 
             //build reply
             //tokens
-            let reply = 'Tokens: \n';
-            tokenArr.forEach((token) => {
-                reply = reply.concat(token.name, " - ", token.amount, "\n");
-            });
+            let reply = "";
+            if(tokenArr.length != 1) {
+                reply = reply.concat('Tokens: \n');
+                tokenArr.forEach((token) => {
+                    reply = reply.concat(token.name, " - ", token.amount, "\n");
+                });
+            }
 
             //nfts
             if(nftArr.length != 0) {
