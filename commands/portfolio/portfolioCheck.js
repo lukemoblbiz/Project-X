@@ -4,7 +4,7 @@ const Moralis = require("moralis").default;
 
 module.exports = {
     name: 'checkportfolio',
-    description: 'Check your portfolio`s networth.',
+    description: 'Check your portfolio`s assets.',
     devOnly: true,
     testOnly: true,
 
@@ -94,7 +94,11 @@ module.exports = {
                     reply = reply.concat(wallet, "\n")
                 });
             }
-            interaction.editReply(reply);
+            if(reply.length < 2000) {
+                interaction.editReply(reply);
+            } else {
+                interaction.editReply('You have too many NFTs + Tokens for a response');
+            }
 
         } catch (e) {
             console.error(e);

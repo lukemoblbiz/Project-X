@@ -9,13 +9,14 @@ const Moralis = require("moralis").default;
 require('dotenv').config();
 
 const token = process.env['TOKEN'];
+const apiKey = process.env['APIKEY']
 
 async function mor() {
   await Moralis.start({
-    apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjFlYmRiNTg3LTQ2ZjMtNGVjMy1iMzVjLTBmZTk3MzMyYmM0YyIsIm9yZ0lkIjoiMzc3NDIxIiwidXNlcklkIjoiMzg3ODUyIiwidHlwZUlkIjoiZjBkMzMxMDEtNGY3MS00NGMwLTkwNTYtYzM1MzIzNzZmZDJhIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MDgwMjI0MDAsImV4cCI6NDg2Mzc4MjQwMH0.58ucItw_dPvfXiRd-P-8f_sSwXBRH9GSfBIlmjsSA7s"
+    apiKey: apiKey
   });
 }
-mor()
+mor();
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 
