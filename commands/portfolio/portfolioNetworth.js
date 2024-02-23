@@ -2,6 +2,8 @@ const { Client, Interaction } = require('discord.js');
 const Portfolio = require('../../models/Portfolio');
 const Moralis = require("moralis").default;
 const { SolNetwork } = require("@moralisweb3/common-sol-utils");
+const fetchCollectionStats = require('./helpers/fetchCollectionStats');
+
 
 module.exports = {
     name: 'networth',
@@ -24,21 +26,49 @@ module.exports = {
 
         try {
             const portfolio = await Portfolio.findOne(query);
+
+            //solana price
+            let solanaPrice;
+            try {
+                const solResponse = await Moralis.SolApi.token.getTokenPrice({
+                    "network": "mainnet",
+                    "address" : "So11111111111111111111111111111111111111112"
+                });
+                solanaPrice = await solResponse.jsonResponse.usdPrice
+            } catch {
+                solanaPrice = 0;
+            }
+
+            //usdc price
+            let usdcPrice;
+                try {
+                    const usdcResponse = await Moralis.SolApi.token.getTokenPrice({
+                        "network": "mainnet",
+                        "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+                    });
+                    usdcPrice = usdcResponse.jsonResponse.usdPrice;
+                } catch {
+                    usdcPrice = 0;
+                }
         
             //full response
             let responseArr = [];
             for (i = 0; i < portfolio.walletAddresses.length; i++){
-                const response = await Moralis.SolApi.account.getPortfolio({
-                    "network": "mainnet",
-                    "address": portfolio.walletAddresses[i]
-                });
-                responseArr[i] = response;
+                try {
+                    const response = await Moralis.SolApi.account.getPortfolio({
+                        "network": "mainnet",
+                        "address": portfolio.walletAddresses[i]
+                    });
+                    responseArr[i] = response;
+                } catch {
+                    responseArr[i]  = 0;
+                }
             };
 
             //isolate tokens
             let tokenArr = [];
-            let usdc = {};
-            let solana = {};
+            let usdc = [];
+            let solana = [];
             for(j = 0; j < responseArr.length; j++) {
                 for(i = 0; i < responseArr[j].jsonResponse.tokens.length; i++) {
                     let tokenData = {
@@ -50,9 +80,11 @@ module.exports = {
                     if (tokenData.symbol) {
                         switch(tokenData.symbol) {
                             case 'USDC':
-                                usdc = tokenData;
+                                usdc.push(tokenData);
+                                break;
                             case 'SOL':
-                                solana = tokenData;
+                                solana.push(tokenData);
+                                break;
                             default :
                                 tokenArr.push(tokenData);
                         }
@@ -66,18 +98,17 @@ module.exports = {
                 for(i = 0; i < responseArr[j].jsonResponse.nfts.length; i++) {
                     const nftData = {
                         "amount" : responseArr[j].jsonResponse.nfts[i].amount,
-                        "address" : responseArr[j].jsonResponse.nfts[i].mint,
                         "symbol" : responseArr[j].jsonResponse.nfts[i].symbol,
                         "name" : responseArr[j].jsonResponse.nfts[i].name
                     } 
                     if(nftData.symbol) {
-                        nftArr.push(nftData)
+                        nftArr.push(nftData);
                     }
                 }
             }
 
-            //tokens
-            let tokenPriceArr = [];
+            //token price
+            /*let tokenPriceArr = [];
             for(i = 0; i < tokenArr.length; i++) {
                 try {
                     const response = await Moralis.SolApi.token.getTokenPrice({
@@ -93,37 +124,25 @@ module.exports = {
                 } catch {
                     tokenPriceArr[i] = 0;
                 }
-            };
-
-            //solana
-            let solanaPrice;
-            try {
-                const solResponse = await Moralis.SolApi.token.getTokenPrice({
-                    "network": "mainnet",
-                    "address": solana.address
-                });
-                solanaPrice = await response.jsonResponse.usdPrice
-            } catch {
-                solanaPrice = 0;
-            }
-
-            //usdc
-            let usdcPrice;
-            try {
-                const solResponse = await Moralis.SolApi.token.getTokenPrice({
-                    "network": "mainnet",
-                    "address": usdc.address
-                });
-                usdcPrice = await response.jsonResponse.usdPrice
-            } catch {
-                usdcPrice = 0;
+            }; */
+            
+            //nft price
+            let nftPriceArr = [];
+            for(i = 0; i < nftArr.length; i++) {
+                if(nftPriceArr[i-1] != 0 &&  i != 0) console.log(nftPriceArr[i-1] + "   " + nftArr[i-1].name);
+                try {
+                    const nftPrice = await fetchCollectionStats(nftArr[i].symbol);
+                    nftPriceArr[i] = await nftPrice / 1000000000 * solanaPrice;
+                } catch {
+                    nftPriceArr[i] = 0;
+                }
             }
 
             interaction.editReply('logged');
 
         } catch (e) {
             console.error(e);
-            interaction.editReply('not logged :(')
+            interaction.editReply('not logged :(');
         }
     }
 }
