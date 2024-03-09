@@ -243,17 +243,17 @@ module.exports = {
             let secondTokenSentence;
             let thirdTokenSentence;
             try{
-                firstTokenSentence =  `\n\nTop Tokens: \n${tokenArr[firstToken].name} ($${tokenPriceArr[firstToken]}`;
+                firstTokenSentence =  `\n\nTop Tokens: \n${tokenArr[firstToken].name} ($${tokenPriceArr[firstToken]})`;
             } catch {
                 firstTokenSentence = ``;
             }
             try{
-                secondTokenSentence  = `, ${tokenArr[secondToken].names[0]} ($${tokenPriceArr[secondToken]})`;
+                secondTokenSentence  = `, ${tokenArr[secondToken].name} ($${tokenPriceArr[secondToken]})`;
             } catch {
                 secondTokenSentence = '';
             }
             try{
-                thirdTokenSentence = `, ${tokenArr[thirdToken].names[0]} ($${tokenPriceArr[thirdToken]})`;
+                thirdTokenSentence = `, ${tokenArr[thirdToken].name} ($${tokenPriceArr[thirdToken]})`;
             } catch {
                 thirdTokenSentence = '';
             }
